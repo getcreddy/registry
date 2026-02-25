@@ -1,0 +1,27 @@
+name: Sync to R2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.json'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Upload to R2
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_REGION: auto
+        run: |
+          R2_ENDPOINT="https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com"
+          
+          aws s3 cp index.json "s3://${{ secrets.R2_BUCKET }}/index.json" \
+            --content-type "application/json" \
+            --endpoint-url "$R2_ENDPOINT"
+          
+          echo "✅ Synced index.json to R2"

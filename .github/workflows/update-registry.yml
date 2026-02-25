@@ -1,0 +1,82 @@
+name: Update Registry
+
+on:
+  repository_dispatch:
+    types: [plugin-release]
+  workflow_dispatch:
+    inputs:
+      plugin:
+        description: 'Plugin name'
+        required: true
+      version:
+        description: 'Version (e.g., v0.0.2)'
+        required: true
+      description:
+        description: 'Plugin description'
+        required: false
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set variables
+        id: vars
+        run: |
+          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+            echo "plugin=${{ github.event.client_payload.plugin }}" >> $GITHUB_OUTPUT
+            echo "version=${{ github.event.client_payload.version }}" >> $GITHUB_OUTPUT
+            echo "description=${{ github.event.client_payload.description }}" >> $GITHUB_OUTPUT
+          else
+            echo "plugin=${{ github.event.inputs.plugin }}" >> $GITHUB_OUTPUT
+            echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+            echo "description=${{ github.event.inputs.description }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update index.json
+        run: |
+          PLUGIN="${{ steps.vars.outputs.plugin }}"
+          VERSION="${{ steps.vars.outputs.version }}"
+          DESC="${{ steps.vars.outputs.description }}"
+          
+          # Update or add plugin entry
+          if [ -n "$DESC" ]; then
+            # Update both version and description
+            jq --arg p "$PLUGIN" --arg v "$VERSION" --arg d "$DESC" \
+              '.plugins[$p].latest = $v | .plugins[$p].description = $d' \
+              index.json > index.json.tmp && mv index.json.tmp index.json
+          else
+            # Just update version, keep existing description
+            jq --arg p "$PLUGIN" --arg v "$VERSION" \
+              '.plugins[$p].latest = $v' \
+              index.json > index.json.tmp && mv index.json.tmp index.json
+          fi
+          
+          echo "Updated index.json:"
+          cat index.json
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.json
+          git diff --staged --quiet || git commit -m "Update ${{ steps.vars.outputs.plugin }} to ${{ steps.vars.outputs.version }}"
+          git push
+
+      - name: Upload to R2
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_REGION: auto
+        run: |
+          R2_ENDPOINT="https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com"
+          
+          aws s3 cp index.json "s3://${{ secrets.R2_BUCKET }}/index.json" \
+            --content-type "application/json" \
+            --endpoint-url "$R2_ENDPOINT"
+          
+          echo "✅ Uploaded index.json to R2"

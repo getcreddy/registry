@@ -1,0 +1,8 @@
+{
+  "plugins": {
+    "github": {
+      "description": "GitHub App installation tokens with repository scoping",
+      "latest": "v0.0.2"
+    }
+  }
+}
