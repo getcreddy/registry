@@ -3,6 +3,10 @@
     "github": {
       "description": "GitHub App installation tokens with repository scoping",
       "latest": "v0.0.3"
+    },
+    "openai": {
+      "latest": "v0.0.1",
+      "description": "Ephemeral OpenAI API keys via Admin API"
     }
   }
 }
