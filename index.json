@@ -7,6 +7,10 @@
     "openai": {
       "latest": "v0.0.1",
       "description": "Ephemeral OpenAI API keys via Admin API"
+    },
+    "anthropic": {
+      "latest": "v0.0.1",
+      "description": "Anthropic API proxy with ephemeral tokens"
     }
   }
 }
