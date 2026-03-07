@@ -2,7 +2,7 @@
   "plugins": {
     "github": {
       "description": "GitHub App installation tokens with repository scoping",
-      "latest": "v0.0.3"
+      "latest": "v0.0.4"
     },
     "openai": {
       "latest": "v0.0.1",
