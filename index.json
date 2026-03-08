@@ -5,7 +5,7 @@
       "latest": "v0.0.5"
     },
     "openai": {
-      "latest": "v0.0.1",
+      "latest": "v0.0.2",
       "description": "Ephemeral OpenAI API keys via Admin API"
     },
     "anthropic": {
