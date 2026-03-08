@@ -13,7 +13,7 @@
       "description": "Anthropic API proxy with ephemeral tokens"
     },
     "tailscale": {
-      "latest": "v0.0.2",
+      "latest": "v0.0.3",
       "description": "Ephemeral Tailscale auth keys for joining tailnets"
     },
     "daytona": {
