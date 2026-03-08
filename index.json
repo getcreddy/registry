@@ -17,7 +17,7 @@
       "description": "Ephemeral Tailscale auth keys for joining tailnets"
     },
     "daytona": {
-      "latest": "v0.0.1",
+      "latest": "v0.0.2",
       "description": "Ephemeral Daytona API keys for sandbox management"
     }
   }
