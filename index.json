@@ -9,7 +9,7 @@
       "description": "Ephemeral OpenAI API keys via Admin API"
     },
     "anthropic": {
-      "latest": "v0.0.1",
+      "latest": "v0.0.2",
       "description": "Anthropic API proxy with ephemeral tokens"
     },
     "tailscale": {
